@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Модель пользователя
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  role      Role     @default(USER)
+  posts     Post[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+}
+
+// Роль пользователя
+enum Role {
+  USER
+  ADMIN
+}
+
+// Модель поста/статьи
+model Post {
+  id          String   @id @default(uuid())
+  title       String
+  content     String?
+  published   Boolean  @default(false)
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([published])
+}
+
+// Клиент (для авторизации)
+model Customer {
+  id          String   @id @default(uuid())
+  email       String?  @unique
+  phone       String?  @unique
+  password    String
+  name        String?
+  repairs     RepairRequest[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([email])
+  @@index([phone])
+}
+
+// Услуга сервиса
+model Service {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Int
+  category    String
+  available   Boolean  @default(true)
+  repairs     RepairRequest[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+}
+
+// Заявка на ремонт
+model RepairRequest {
+  id          String   @id @default(uuid())
+  customerName String
+  phone       String
+  deviceModel String
+  problem     String
+  status      RepairStatus @default(PENDING)
+  serviceId   String
+  service     Service    @relation(fields: [serviceId], references: [id])
+  customerId  String?
+  customer    Customer?  @relation(fields: [customerId], references: [id])
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([serviceId])
+}
+
+enum RepairStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
