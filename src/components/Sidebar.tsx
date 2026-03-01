@@ -209,6 +209,26 @@ export default function Sidebar() {
             </ul>
           </nav>
 
+          {/* Logout button - только если вошёл */}
+          {isLoggedIn && (
+            <div className="p-6 border-t border-white/20">
+              <button
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("user");
+                  window.dispatchEvent(new Event("auth-change"));
+                  window.location.href = "/";
+                }}
+                className="w-full py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Выйти
+              </button>
+            </div>
+          )}
+
           {/* Contact info */}
           <div className="p-6 border-t border-white/20">
             <div className="space-y-3">

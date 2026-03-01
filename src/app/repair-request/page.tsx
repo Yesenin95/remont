@@ -181,7 +181,7 @@ export default function RepairRequestPage() {
                   setFormData({ ...formData, customerName: e.target.value })
                 }
                 placeholder="Иван Иванов"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
                 required
               />
             </div>
@@ -198,7 +198,7 @@ export default function RepairRequestPage() {
                   setFormData({ ...formData, phone: e.target.value })
                 }
                 placeholder="+7 (999) 123-45-67"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
                 required
               />
             </div>
@@ -215,7 +215,7 @@ export default function RepairRequestPage() {
                   setFormData({ ...formData, deviceModel: e.target.value })
                 }
                 placeholder="iPhone 13, Samsung Galaxy S22..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
                 required
               />
             </div>
@@ -231,7 +231,7 @@ export default function RepairRequestPage() {
                   setFormData({ ...formData, serviceId: e.target.value })
                 }
                 onFocus={loadServices}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
               >
                 <option value="">Не выбрано</option>
                 {services.map((service) => (
@@ -254,7 +254,7 @@ export default function RepairRequestPage() {
                 }
                 placeholder="Опишите подробно, что случилось с устройством..."
                 rows={4}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-500 resize-none"
                 required
               />
             </div>
@@ -271,7 +271,7 @@ export default function RepairRequestPage() {
                 }
                 placeholder="Дополнительная информация..."
                 rows={2}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-500 resize-none"
               />
             </div>
 

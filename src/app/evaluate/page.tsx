@@ -351,7 +351,7 @@ export default function EvaluatePage() {
                   onChange={(e) => setBrand(e.target.value)}
                   placeholder="Apple, Samsung, Xiaomi..."
                   list="brand-suggestions"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
                   required
                 />
                 <datalist id="brand-suggestions">
@@ -370,7 +370,7 @@ export default function EvaluatePage() {
                   onChange={(e) => setModel(e.target.value)}
                   placeholder="iPhone 13, Galaxy S22..."
                   list="model-suggestions"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
                   required
                 />
                 <datalist id="model-suggestions">
@@ -447,7 +447,7 @@ export default function EvaluatePage() {
                       }
                       className="w-4 h-4 text-blue-600 mb-1"
                     />
-                    <span className="text-xs text-center">{item.label}</span>
+                    <span className="text-xs text-center text-gray-900">{item.label}</span>
                     <span className="text-xs text-blue-600 font-medium">{item.value}</span>
                   </label>
                 ))}

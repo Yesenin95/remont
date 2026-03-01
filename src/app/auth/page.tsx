@@ -10,14 +10,20 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Если уже авторизован, перенаправляем на dashboard
+  // Проверяем авторизацию при загрузке
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
-      window.location.href = "/dashboard";
-    }
-  }, [router]);
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.dispatchEvent(new Event("auth-change"));
+    setIsLoggedIn(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,7 +72,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl">
+          <div className="w-20 h-20 mx-auto mb-4 bg-linear-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl">
             <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
             </svg>
@@ -78,6 +84,27 @@ export default function LoginPage() {
         {/* Login Form Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Вход</h2>
+
+          {/* Если уже вошёл */}
+          {isLoggedIn && (
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-center">
+              <p className="text-green-800 font-medium mb-3">Вы уже авторизованы</p>
+              <div className="flex gap-3 justify-center">
+                <a
+                  href="/dashboard"
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                >
+                  Перейти в кабинет
+                </a>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+                >
+                  Выйти
+                </button>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} autoComplete="off">
             <div className="space-y-4">
@@ -142,7 +169,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-6 py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              className="w-full mt-6 py-3 px-4 bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
               {loading ? "Загрузка..." : "Войти"}
             </button>
