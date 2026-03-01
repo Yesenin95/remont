@@ -545,15 +545,23 @@ export default function EvaluatePage() {
               </div>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
-                  href="https://t.me/+79879773047"
+                  href="https://t.me/+79999999999"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block px-8 py-3 bg-white text-blue-600 font-semibold rounded-full hover:bg-yellow-300 transition-colors"
+                  className="inline-block px-8 py-3 bg-white text-blue-600 font-semibold rounded-full hover:bg-blue-100 transition-colors"
                 >
-                  Сдать в сервис
+                  Telegram
                 </a>
                 <a
-                  href="tel:+79991234567"
+                  href="https://max.ru/chat/+79999999999"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block px-8 py-3 bg-white text-orange-600 font-semibold rounded-full hover:bg-orange-100 transition-colors"
+                >
+                  MAX
+                </a>
+                <a
+                  href="tel:+79999999999"
                   className="inline-block px-8 py-3 bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition-colors"
                 >
                   Позвонить

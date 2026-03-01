@@ -5,60 +5,63 @@ import bcrypt from "bcryptjs";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, phone, password } = body;
+    const { name, email, password } = body;
 
-    if (!password || password.length < 6) {
+    console.log("Register attempt:", { email, name });
+
+    if (!email || !password) {
+      console.log("Missing email or password");
       return NextResponse.json(
-        { error: "Пароль должен быть не менее 6 символов" },
+        { error: "Введите email и пароль" },
         { status: 400 }
       );
     }
 
-    if (!email && !phone) {
-      return NextResponse.json(
-        { error: "Укажите email или телефон" },
-        { status: 400 }
-      );
-    }
-
-    // Проверяем, существует ли уже пользователь
-    const existingCustomer = await prisma.customer.findFirst({
-      where: {
-        OR: [
-          email ? { email } : {},
-          phone ? { phone } : {},
-        ].filter(Boolean),
-      },
+    // Проверяем, существует ли пользователь
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
     });
 
-    if (existingCustomer) {
+    if (existingUser) {
+      console.log("User already exists:", email);
       return NextResponse.json(
-        { error: "Пользователь с таким email или телефоном уже существует" },
+        { error: "Пользователь с таким email уже существует" },
         { status: 400 }
       );
     }
 
     // Хешируем пароль
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 10);
+    console.log("Password hashed successfully");
 
-    // Создаём клиента
-    const customer = await prisma.customer.create({
+    // Создаём пользователя с ролью USER (клиент)
+    const user = await prisma.user.create({
       data: {
-        email: email || null,
-        phone: phone || null,
-        password: hashedPassword,
+        email,
+        name: name || null,
+        passwordHash,
+        role: "USER",
       },
     });
 
+    console.log("User created:", user.id);
+
+    // Генерируем токен
+    const token = `token-${user.id}-${Date.now()}`;
+
     return NextResponse.json({
-      id: customer.id,
-      email: customer.email,
-      phone: customer.phone,
-    }, { status: 201 });
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
+    });
   } catch (error) {
     console.error("Registration error:", error);
     return NextResponse.json(
-      { error: "Ошибка регистрации" },
+      { error: "Ошибка регистрации", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
   }

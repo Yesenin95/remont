@@ -8,16 +8,28 @@ export default function Sidebar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
+    const checkLogin = () => {
+      setIsLoggedIn(!!localStorage.getItem("token"));
+    };
+    
+    checkLogin();
 
     // Слушаем изменения в localStorage
     const handleStorageChange = () => {
-      setIsLoggedIn(!!localStorage.getItem("token"));
+      checkLogin();
+    };
+    
+    // Слушаем наше кастомное событие
+    const handleAuthChange = () => {
+      checkLogin();
     };
 
     window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    window.addEventListener("auth-change", handleAuthChange);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("auth-change", handleAuthChange);
+    };
   }, []);
 
   return (
@@ -82,6 +94,35 @@ export default function Sidebar() {
                   </span>
                 </Link>
               </li>
+              {!isLoggedIn ? (
+                <li>
+                  <Link
+                    href="/auth"
+                    className="block px-4 py-3 rounded-lg hover:bg-white/30 transition-colors"
+                  >
+                    <span className="flex items-center gap-3">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16a4 4 0 11-8 0 4 4 0 018 0zM2 20a4 4 0 014-4h8a4 4 0 014 4v2H2v-2z" />
+                      </svg>
+                      Вход
+                    </span>
+                  </Link>
+                </li>
+              ) : (
+                <li>
+                  <Link
+                    href="/dashboard"
+                    className="block px-4 py-3 rounded-lg hover:bg-white/30 transition-colors"
+                  >
+                    <span className="flex items-center gap-3">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      Личный кабинет
+                    </span>
+                  </Link>
+                </li>
+              )}
               <li>
                 <Link
                   href="/services"
@@ -123,8 +164,21 @@ export default function Sidebar() {
                 </Link>
               </li>
               <li>
+                <Link
+                  href="/repair-request"
+                  className="block px-4 py-3 rounded-lg hover:bg-white/30 transition-colors"
+                >
+                  <span className="flex items-center gap-3">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Оформить заявку
+                  </span>
+                </Link>
+              </li>
+              <li>
                 <a
-                  href="https://t.me/+79879773047"
+                  href="https://t.me/+79999999999"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block px-4 py-3 rounded-lg hover:bg-white/30 transition-colors"
@@ -133,40 +187,25 @@ export default function Sidebar() {
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.427-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
                     </svg>
-                    Оформить заявку
+                    Telegram
                   </span>
                 </a>
               </li>
-              {!isLoggedIn ? (
-                <li>
-                  <Link
-                    href="/auth"
-                    className="block px-4 py-3 rounded-lg hover:bg-white/30 transition-colors"
-                  >
-                    <span className="flex items-center gap-3">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16a4 4 0 11-8 0 4 4 0 018 0zM2 20a4 4 0 014-4h8a4 4 0 014 4v2H2v-2z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                      Вход
-                    </span>
-                  </Link>
-                </li>
-              ) : (
-                <li>
-                  <Link
-                    href="/dashboard"
-                    className="block px-4 py-3 rounded-lg hover:bg-white/30 transition-colors"
-                  >
-                    <span className="flex items-center gap-3">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                      Профиль
-                    </span>
-                  </Link>
-                </li>
-              )}
+              <li>
+                <a
+                  href="https://max.ru/chat/+79999999999"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block px-4 py-3 rounded-lg hover:bg-white/30 transition-colors"
+                >
+                  <span className="flex items-center gap-3">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+                    </svg>
+                    MAX
+                  </span>
+                </a>
+              </li>
             </ul>
           </nav>
 

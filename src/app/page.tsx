@@ -16,9 +16,19 @@ export default function Home() {
 
   useEffect(() => {
     fetch("/api/services")
-      .then((res) => res.json())
-      .then((data) => setServices(data))
-      .catch(console.error);
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch services");
+        return res.json();
+      })
+      .then((data) => {
+        // API возвращает массив напрямую
+        const servicesArray = Array.isArray(data) ? data : [];
+        setServices(servicesArray);
+      })
+      .catch((error) => {
+        console.error("Error loading services:", error);
+        setServices([]);
+      });
   }, []);
 
   return (
@@ -40,22 +50,27 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="https://t.me/+79879773047"
+                href="https://t.me/+79999999999"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-full bg-white text-orange-500 hover:bg-yellow-300 transition-colors shadow-lg"
+                className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-full bg-white text-blue-500 hover:bg-blue-100 transition-colors shadow-lg"
               >
                 <svg className="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.427-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
                 </svg>
-                Написать в Telegram
+                Telegram
               </a>
-              <Link
-                href="/services"
-                className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-full border-2 border-white text-white hover:bg-white/20 transition-colors"
+              <a
+                href="https://max.ru/chat/+79999999999"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-full bg-white text-orange-500 hover:bg-orange-100 transition-colors shadow-lg"
               >
-                Наши услуги
-              </Link>
+                <svg className="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+                </svg>
+                MAX
+              </a>
             </div>
           </div>
         </div>
@@ -250,16 +265,26 @@ export default function Home() {
               Сломался телефон?
             </h2>
             <p className="text-xl text-white/90 mb-8">
-              Напишите нам в Telegram и мы перезвоним в течение 5 минут
+              Напишите нам и мы перезвоним в течение 5 минут
             </p>
-            <a
-              href="https://t.me/+79879773047"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-full bg-white text-blue-600 hover:bg-yellow-300 transition-colors"
-            >
-              Написать в Telegram
-            </a>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="https://t.me/+79999999999"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-6 py-3 text-lg font-semibold rounded-full bg-white text-blue-600 hover:bg-blue-100 transition-colors"
+              >
+                Telegram
+              </a>
+              <a
+                href="https://max.ru/chat/+79999999999"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-6 py-3 text-lg font-semibold rounded-full bg-white text-orange-600 hover:bg-orange-100 transition-colors"
+              >
+                MAX
+              </a>
+            </div>
           </div>
         </div>
       </section>

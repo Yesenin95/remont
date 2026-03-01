@@ -1,53 +1,45 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-function RegisterForm() {
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
+export default function RegisterPage() {
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const type = searchParams.get("type");
-
-  useEffect(() => {
-    // Если уже авторизован, перенаправляем на dashboard
-    const token = localStorage.getItem("token");
-    if (token) {
-      router.push("/dashboard");
-    }
-  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Пароли не совпадают");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError("Пароль должен быть не менее 6 символов");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const registerData: { email?: string; phone?: string; password: string } = {
-        password,
-      };
-
-      if (email) {
-        registerData.email = email;
-      }
-      if (phone) {
-        registerData.phone = phone;
-      }
-
-      if (!registerData.email && !registerData.phone) {
-        throw new Error("Укажите email или телефон для регистрации");
-      }
-
-      // Сначала регистрируемся
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(registerData),
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
       });
 
       const data = await res.json();
@@ -57,109 +49,104 @@ function RegisterForm() {
       }
 
       // Автоматический вход после регистрации
-      const loginRes = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: email || phone,
-          password,
-        }),
-      });
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
 
-      const loginData = await loginRes.json();
-      
-      if (!loginRes.ok) {
-        throw new Error(loginData.error || "Ошибка входа");
-      }
-      
-      localStorage.setItem("token", loginData.token);
-      localStorage.setItem("user", JSON.stringify({
-        id: loginData.id,
-        email: loginData.email,
-        phone: loginData.phone,
-        name: loginData.name,
-      }));
-      
-      window.location.href = "/dashboard";
+      router.push("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Ошибка");
+      setError(err instanceof Error ? err.message : "Ошибка регистрации");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-4 bg-linear-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl">
+            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">TechFix</h1>
-          <p className="text-gray-600 mt-2">Сервисный центр</p>
+          <h1 className="text-3xl font-bold text-gray-900">Регистрация</h1>
+          <p className="text-gray-600 mt-2">Создайте аккаунт для отслеживания заявок</p>
         </div>
 
         {/* Register Form Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            Регистрация {type === "phone" ? "по телефону" : "по email"}
-          </h2>
-          
           <form onSubmit={handleSubmit}>
             <div className="space-y-4">
-              {type !== "phone" && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="example@mail.ru"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-500"
-                    required={type !== "phone"}
-                  />
-                </div>
-              )}
-
-              {type !== "email" && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
-                    Телефон
-                  </label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+7 (999) 123-45-67"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-500"
-                    required={type === "phone"}
-                  />
-                </div>
-              )}
+              <div>
+                <label className="block text-sm font-medium text-gray-900 mb-2">
+                  Имя
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="Иван Иванов"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-500"
+                  required
+                  autoComplete="name"
+                  name="name"
+                />
+              </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">
+                <label className="block text-sm font-medium text-gray-900 mb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="example@mail.ru"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-500"
+                  required
+                  autoComplete="email"
+                  name="email"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-900 mb-2">
                   Пароль
                 </label>
                 <input
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder="••••••••"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-500"
                   required
                   minLength={6}
+                  autoComplete="new-password"
+                  name="new-password"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-900 mb-2">
+                  Подтвердите пароль
+                </label>
+                <input
+                  type="password"
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  placeholder="••••••••"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-500"
+                  required
+                  minLength={6}
+                  autoComplete="new-password"
+                  name="confirm-password"
                 />
               </div>
             </div>
 
             {error && (
-              <div className="mt-4 p-3 bg-red-50 text-red-600 rounded-xl text-sm">
+              <div className="mt-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm">
                 {error}
               </div>
             )}
@@ -167,46 +154,34 @@ function RegisterForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-6 py-3 px-4 bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full mt-6 py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
               {loading ? "Загрузка..." : "Зарегистрироваться"}
             </button>
           </form>
-        </div>
 
-        {/* Login Link */}
-        <div className="mt-6 bg-white rounded-2xl shadow-xl p-6 text-center">
-          <p className="text-gray-600 mb-4">Уже есть аккаунт?</p>
-          <Link
-            href="/auth"
-            className="block w-full py-3 px-4 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-colors"
-          >
-            Войти
-          </Link>
+          {/* Login Link */}
+          <div className="mt-6 text-center">
+            <p className="text-gray-600 text-sm mb-3">Уже есть аккаунт?</p>
+            <Link
+              href="/auth"
+              className="inline-block px-6 py-2 bg-blue-100 text-blue-700 font-medium rounded-xl hover:bg-blue-200 transition-colors text-sm"
+            >
+              Войти
+            </Link>
+          </div>
         </div>
 
         {/* Back to home */}
         <div className="mt-6 text-center">
-          <a
+          <Link
             href="/"
-            className="text-gray-600 hover:text-gray-900 text-sm"
+            className="text-gray-600 hover:text-gray-900 text-sm font-medium"
           >
             ← Вернуться на главную
-          </a>
+          </Link>
         </div>
       </div>
     </div>
-  );
-}
-
-export default function RegisterPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    }>
-      <RegisterForm />
-    </Suspense>
   );
 }
