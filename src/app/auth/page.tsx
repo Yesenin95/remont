@@ -111,7 +111,6 @@ export default function LoginPage() {
                   minLength={6}
                   autoComplete="current-password"
                   name="current-password"
-                  webkitdirectory=""
                   data-1p-ignore
                   data-bwignore
                 />
